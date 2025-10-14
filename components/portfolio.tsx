@@ -2,6 +2,10 @@
 
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import useEmblaCarousel from "embla-carousel-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
 
 const projects = [
   {
@@ -31,6 +35,49 @@ const projects = [
 ]
 
 export function Portfolio() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
+
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (emblaApi) emblaApi.scrollTo(index)
+    },
+    [emblaApi],
+  )
+
+  useEffect(() => {
+    if (!emblaApi) return
+
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap())
+    }
+
+    emblaApi.on("select", onSelect)
+    onSelect()
+
+    return () => {
+      emblaApi.off("select", onSelect)
+    }
+  }, [emblaApi])
+
+  useEffect(() => {
+    if (!emblaApi) return
+
+    const autoplay = setInterval(() => {
+      emblaApi.scrollNext()
+    }, 5000)
+
+    return () => clearInterval(autoplay)
+  }, [emblaApi])
+
   return (
     <section id="portfolio" className="relative py-20 md:py-28">
       <div className="container mx-auto px-4">
@@ -43,35 +90,73 @@ export function Portfolio() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
-            <Card
-              key={index}
-              className="glass-effect overflow-hidden group cursor-pointer hover:scale-105 transition-all duration-300 border-primary/20"
-            >
-              <div className="relative h-64 overflow-hidden p-4">
-                <img
-                  src={project.image || "/placeholder.svg"}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-xl"
-                />
-                <div className="absolute inset-4 bg-gradient-to-t from-background via-background/50 to-transparent rounded-xl pointer-events-none group-hover:opacity-0 transition-opacity duration-300" />
-              </div>
-              <div className="p-6 space-y-4">
-                <div>
-                  <Badge className="mb-2 bg-primary/20 text-primary border-primary/30">{project.type}</Badge>
-                  <h3 className="text-2xl font-bold">{project.title}</h3>
+        <div className="relative max-w-6xl mx-auto">
+          <div className="overflow-hidden rounded-3xl" ref={emblaRef}>
+            <div className="flex">
+              {projects.map((project, index) => (
+                <div key={index} className="flex-[0_0_100%] min-w-0">
+                  <Card className="relative h-[600px] overflow-hidden border-0 rounded-3xl">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                      style={{
+                        backgroundImage: `url(${project.image})`,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+                    <div className="relative h-full flex flex-col justify-end p-8 md:p-12 text-white">
+                      <Badge className="mb-4 w-fit bg-primary/90 text-white border-0 backdrop-blur-sm">
+                        {project.type}
+                      </Badge>
+                      <h3 className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]">
+                        {project.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {project.technologies.map((tech, i) => (
+                          <Badge
+                            key={i}
+                            variant="outline"
+                            className="border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </Card>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech, i) => (
-                    <Badge key={i} variant="outline" className="border-muted-foreground/30">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          ))}
+              ))}
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 hover:text-white hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-primary/50"
+            onClick={scrollPrev}
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 hover:text-white hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-primary/50"
+            onClick={scrollNext}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
+          <div className="flex justify-center gap-2 mt-8">
+            {projects.map((_, index) => (
+              <button
+                key={index}
+                className={`h-2 rounded-full transition-all duration-300 hover:scale-125 ${
+                  index === selectedIndex
+                    ? "w-8 bg-primary shadow-lg shadow-primary/50"
+                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                }`}
+                onClick={() => scrollTo(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

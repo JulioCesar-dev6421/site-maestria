@@ -16,9 +16,7 @@ export function SmartHome3D() {
 
   return (
     <div className="relative w-full aspect-square max-w-lg mx-auto">
-      {/* 3D House Container */}
       <div className="relative w-full h-full glass-effect rounded-3xl p-8 animate-float">
-        {/* House Icon */}
         <div className="absolute inset-0 flex items-center justify-center">
           <Home className="w-48 h-48 text-primary/20" strokeWidth={1} />
         </div>
@@ -32,7 +30,10 @@ export function SmartHome3D() {
               className={`absolute w-16 h-16 rounded-full glass-effect flex items-center justify-center transition-all duration-300 hover:scale-110 ${
                 activeHotspot === hotspot.id ? "scale-125 animate-glow-pulse" : ""
               }`}
-              style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
+              style={{
+                left: `${hotspot.x}%`,
+                top: `${hotspot.y}%`,
+              }}
               onClick={() => setActiveHotspot(activeHotspot === hotspot.id ? null : hotspot.id)}
             >
               <Icon className={`w-8 h-8 ${hotspot.color}`} />
@@ -51,7 +52,6 @@ export function SmartHome3D() {
         )}
       </div>
 
-      {/* Decorative Elements */}
       <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-3xl" />
       <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/20 rounded-full blur-3xl" />
     </div>

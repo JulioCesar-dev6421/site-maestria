@@ -140,5 +140,5 @@
 .glass-effect {
   background: var(--glass);
   backdrop-filter: blur(20px);
-  border: 1px solid oklch(0.35 0.08 250 / 0.3);
+  /* removed border from glass-effect to eliminate card borders */
 }

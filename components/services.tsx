@@ -75,17 +75,23 @@ export function Services() {
             return (
               <Card
                 key={index}
-                className="glass-effect p-6 hover:scale-105 transition-all duration-300 group cursor-pointer border-primary/20 relative overflow-hidden"
+                className="glass-effect p-6 transition-all duration-300 group cursor-pointer border-primary/20 relative overflow-hidden hover:scale-105"
               >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
                 <div className="relative z-10">
                   <div className="mb-4">
-                    <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
-                      <Icon className="w-7 h-7 text-primary" />
+                    <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-all duration-300 group-hover:scale-110 transform">
+                      <Icon className="w-7 h-7 text-primary group-hover:scale-110 transition-transform" />
                     </div>
                   </div>
-                  <h3 className="font-bold text-lg mb-2 text-balance">{service.title}</h3>
+                  <h3 className="font-bold text-lg mb-2 text-balance group-hover:text-primary transition-colors">
+                    {service.title}
+                  </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed text-pretty">{service.description}</p>
                 </div>
+
+                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
               </Card>
             )
           })}
