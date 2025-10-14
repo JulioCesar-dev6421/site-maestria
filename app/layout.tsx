@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "Maestria - Automação Residencial e Predial",
   description: "Tecnologia e conforto, sob medida para o seu estilo de vida.",
   generator: "v0.app",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 }
 
 export default function RootLayout({
