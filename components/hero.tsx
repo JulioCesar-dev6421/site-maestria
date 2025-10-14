@@ -12,7 +12,7 @@ export function Hero() {
   }
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-20">
+    <section id="home" className="relative py-20 md:py-28 min-h-screen flex items-center justify-center">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 text-center lg:text-left">

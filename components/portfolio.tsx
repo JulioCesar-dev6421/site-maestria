@@ -32,7 +32,7 @@ const projects = [
 
 export function Portfolio() {
   return (
-    <section id="portfolio" className="relative py-24 md:py-32">
+    <section id="portfolio" className="relative py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-bold font-[family-name:var(--font-orbitron)] mb-4 text-balance">
@@ -47,15 +47,15 @@ export function Portfolio() {
           {projects.map((project, index) => (
             <Card
               key={index}
-              className="glass-effect overflow-hidden group cursor-pointer hover:scale-[1.02] transition-all duration-300 border-primary/20"
+              className="glass-effect overflow-hidden group cursor-pointer hover:scale-105 transition-all duration-300 border-primary/20"
             >
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-64 overflow-hidden p-4">
                 <img
                   src={project.image || "/placeholder.svg"}
                   alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                <div className="absolute inset-4 bg-gradient-to-t from-background via-background/50 to-transparent rounded-xl pointer-events-none group-hover:opacity-0 transition-opacity duration-300" />
               </div>
               <div className="p-6 space-y-4">
                 <div>
