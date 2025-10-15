@@ -142,3 +142,31 @@
   backdrop-filter: blur(20px);
   /* removed border from glass-effect to eliminate card borders */
 }
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce blur effects on mobile for better performance */
+  .glass-effect {
+    backdrop-filter: blur(10px);
+  }
+
+  /* Disable expensive animations on mobile */
+  .animate-float {
+    animation: none;
+  }
+
+  .animate-glow-pulse {
+    animation: none;
+    box-shadow: 0 0 20px var(--glow);
+  }
+
+  /* Reduce transform complexity on mobile */
+  * {
+    will-change: auto !important;
+  }
+
+  /* Optimize scrolling performance */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+}

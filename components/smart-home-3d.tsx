@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Home, Lightbulb, Shield, Volume2, Thermometer, Camera } from "lucide-react"
+import { useMobile } from "@/hooks/use-mobile"
 
 const hotspots = [
   { id: 1, icon: Lightbulb, label: "Iluminação", x: 30, y: 40, color: "text-yellow-400" },
@@ -13,22 +14,22 @@ const hotspots = [
 
 export function SmartHome3D() {
   const [activeHotspot, setActiveHotspot] = useState<number | null>(null)
+  const isMobile = useMobile()
 
   return (
     <div className="relative w-full aspect-square max-w-lg mx-auto">
-      <div className="relative w-full h-full glass-effect rounded-3xl p-8 animate-float">
+      <div className={`relative w-full h-full glass-effect rounded-3xl p-8 ${!isMobile ? "animate-float" : ""}`}>
         <div className="absolute inset-0 flex items-center justify-center">
           <Home className="w-48 h-48 text-primary/20" strokeWidth={1} />
         </div>
 
-        {/* Interactive Hotspots */}
         {hotspots.map((hotspot) => {
           const Icon = hotspot.icon
           return (
             <button
               key={hotspot.id}
               className={`absolute w-16 h-16 rounded-full glass-effect flex items-center justify-center transition-all duration-300 hover:scale-110 ${
-                activeHotspot === hotspot.id ? "scale-125 animate-glow-pulse" : ""
+                activeHotspot === hotspot.id ? `scale-125 ${!isMobile ? "animate-glow-pulse" : ""}` : ""
               }`}
               style={{
                 left: `${hotspot.x}%`,
@@ -41,7 +42,6 @@ export function SmartHome3D() {
           )
         })}
 
-        {/* Hotspot Info Panel */}
         {activeHotspot && (
           <div className="absolute bottom-4 left-4 right-4 glass-effect rounded-xl p-4 animate-in slide-in-from-bottom-4">
             <h3 className="font-bold text-lg text-primary">{hotspots.find((h) => h.id === activeHotspot)?.label}</h3>
@@ -52,8 +52,12 @@ export function SmartHome3D() {
         )}
       </div>
 
-      <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-3xl" />
-      <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/20 rounded-full blur-3xl" />
+      {!isMobile && (
+        <>
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/20 rounded-full blur-3xl" />
+        </>
+      )}
     </div>
   )
 }

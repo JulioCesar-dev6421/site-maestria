@@ -1,10 +1,12 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { useMobile } from "@/hooks/use-mobile"
 
 export function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mouseRef = useRef({ x: 0, y: 0 })
+  const isMobile = useMobile()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -27,7 +29,8 @@ export function ParticleBackground() {
       baseY: number
     }> = []
 
-    for (let i = 0; i < 100; i++) {
+    const particleCount = isMobile ? 30 : 100
+    for (let i = 0; i < particleCount; i++) {
       const x = Math.random() * canvas.width
       const y = Math.random() * canvas.height
       particles.push({
@@ -43,14 +46,17 @@ export function ParticleBackground() {
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY }
+      if (!isMobile) {
+        mouseRef.current = { x: e.clientX, y: e.clientY }
+      }
     }
 
     const handleClick = (e: MouseEvent) => {
+      if (isMobile) return
+
       const clickX = e.clientX
       const clickY = e.clientY
 
-      // Create ripple effect by pushing particles away
       particles.forEach((particle) => {
         const dx = particle.x - clickX
         const dy = particle.y - clickY
@@ -63,7 +69,6 @@ export function ParticleBackground() {
         }
       })
 
-      // Add burst particles at click location
       for (let i = 0; i < 10; i++) {
         const angle = (Math.PI * 2 * i) / 10
         particles.push({
@@ -86,60 +91,69 @@ export function ParticleBackground() {
       const mouse = mouseRef.current
 
       particles.forEach((particle, index) => {
-        const dx = mouse.x - particle.x
-        const dy = mouse.y - particle.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        const maxDistance = 200
+        if (!isMobile) {
+          const dx = mouse.x - particle.x
+          const dy = mouse.y - particle.y
+          const distance = Math.sqrt(dx * dx + dy * dy)
+          const maxDistance = 200
 
-        // Mouse attraction effect
-        if (distance < maxDistance) {
-          const force = (maxDistance - distance) / maxDistance
-          particle.speedX += (dx / distance) * force * 0.1
-          particle.speedY += (dy / distance) * force * 0.1
+          if (distance < maxDistance) {
+            const force = (maxDistance - distance) / maxDistance
+            particle.speedX += (dx / distance) * force * 0.1
+            particle.speedY += (dy / distance) * force * 0.1
+          }
         }
 
-        // Spring back to base position
         const baseDistanceX = particle.baseX - particle.x
         const baseDistanceY = particle.baseY - particle.y
         particle.speedX += baseDistanceX * 0.001
         particle.speedY += baseDistanceY * 0.001
 
-        // Apply friction
         particle.speedX *= 0.98
         particle.speedY *= 0.98
 
         particle.x += particle.speedX
         particle.y += particle.speedY
 
-        // Bounce off edges
         if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1
         if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1
 
-        particles.forEach((otherParticle, otherIndex) => {
-          if (index === otherIndex) return
-          const dx = particle.x - otherParticle.x
-          const dy = particle.y - otherParticle.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
+        if (!isMobile) {
+          particles.forEach((otherParticle, otherIndex) => {
+            if (index === otherIndex) return
+            const dx = particle.x - otherParticle.x
+            const dy = particle.y - otherParticle.y
+            const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 100) {
-            ctx.beginPath()
-            ctx.moveTo(particle.x, particle.y)
-            ctx.lineTo(otherParticle.x, otherParticle.y)
-            const opacity = (1 - distance / 100) * 0.15
-            ctx.strokeStyle = `rgba(100, 150, 255, ${opacity})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
-          }
-        })
+            if (distance < 100) {
+              ctx.beginPath()
+              ctx.moveTo(particle.x, particle.y)
+              ctx.lineTo(otherParticle.x, otherParticle.y)
+              const opacity = (1 - distance / 100) * 0.15
+              ctx.strokeStyle = `rgba(100, 150, 255, ${opacity})`
+              ctx.lineWidth = 0.5
+              ctx.stroke()
+            }
+          })
+        }
 
-        // Draw particle
         ctx.beginPath()
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
 
-        if (distance < maxDistance) {
-          const glowIntensity = (maxDistance - distance) / maxDistance
-          ctx.shadowBlur = 10 * glowIntensity
-          ctx.shadowColor = "rgba(100, 150, 255, 0.8)"
+        if (!isMobile) {
+          const mouse = mouseRef.current
+          const dx = mouse.x - particle.x
+          const dy = mouse.y - particle.y
+          const distance = Math.sqrt(dx * dx + dy * dy)
+          const maxDistance = 200
+
+          if (distance < maxDistance) {
+            const glowIntensity = (maxDistance - distance) / maxDistance
+            ctx.shadowBlur = 10 * glowIntensity
+            ctx.shadowColor = "rgba(100, 150, 255, 0.8)"
+          } else {
+            ctx.shadowBlur = 0
+          }
         } else {
           ctx.shadowBlur = 0
         }
@@ -147,9 +161,9 @@ export function ParticleBackground() {
         ctx.fillStyle = `rgba(100, 150, 255, ${particle.opacity})`
         ctx.fill()
 
-        if (particle.opacity < 0.1 && index > 100) {
+        if (particle.opacity < 0.1 && index > particleCount) {
           particles.splice(index, 1)
-        } else if (index > 100) {
+        } else if (index > particleCount) {
           particle.opacity *= 0.98
         }
       })
@@ -165,15 +179,17 @@ export function ParticleBackground() {
     }
 
     window.addEventListener("resize", handleResize)
-    window.addEventListener("mousemove", handleMouseMove)
-    canvas.addEventListener("click", handleClick)
+    if (!isMobile) {
+      window.addEventListener("mousemove", handleMouseMove)
+      canvas.addEventListener("click", handleClick)
+    }
 
     return () => {
       window.removeEventListener("resize", handleResize)
       window.removeEventListener("mousemove", handleMouseMove)
       canvas.removeEventListener("click", handleClick)
     }
-  }, [])
+  }, [isMobile])
 
   return <canvas ref={canvasRef} className="fixed inset-0 z-0" />
 }

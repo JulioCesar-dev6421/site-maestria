@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
+import { useMobile } from "@/hooks/use-mobile"
 
 const projects = [
   {
@@ -37,6 +38,7 @@ const projects = [
 export function Portfolio() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const isMobile = useMobile()
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev()
@@ -71,12 +73,15 @@ export function Portfolio() {
   useEffect(() => {
     if (!emblaApi) return
 
-    const autoplay = setInterval(() => {
-      emblaApi.scrollNext()
-    }, 5000)
+    const autoplay = setInterval(
+      () => {
+        emblaApi.scrollNext()
+      },
+      isMobile ? 7000 : 5000,
+    )
 
     return () => clearInterval(autoplay)
-  }, [emblaApi])
+  }, [emblaApi, isMobile])
 
   return (
     <section id="portfolio" className="relative py-20 md:py-28">
@@ -95,7 +100,9 @@ export function Portfolio() {
             <div className="flex">
               {projects.map((project, index) => (
                 <div key={index} className="flex-[0_0_100%] min-w-0">
-                  <Card className="relative h-[600px] overflow-hidden border-0 rounded-3xl">
+                  <Card
+                    className={`relative ${isMobile ? "h-[400px]" : "h-[600px]"} overflow-hidden border-0 rounded-3xl`}
+                  >
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                       style={{
@@ -107,7 +114,9 @@ export function Portfolio() {
                       <Badge className="mb-4 w-fit bg-primary/90 text-white border-0 backdrop-blur-sm">
                         {project.type}
                       </Badge>
-                      <h3 className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]">
+                      <h3
+                        className={`${isMobile ? "text-2xl" : "text-4xl md:text-5xl"} font-bold mb-4 font-[family-name:var(--font-orbitron)]`}
+                      >
                         {project.title}
                       </h3>
                       <div className="flex flex-wrap gap-2">
