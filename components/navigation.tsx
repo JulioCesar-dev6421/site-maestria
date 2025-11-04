@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -31,7 +32,16 @@ export function Navigation() {
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <div className="text-2xl font-bold font-[family-name:var(--font-orbitron)] text-primary">MAESTRIA</div>
+        <div className="flex items-center gap-2">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Gemini_Generated_Image_7vnbwi7vnbwi7vnb-removebg-preview-iZr5nOAJ7eqCVFNlDwNf3Qt2qJU93Q.png"
+            alt="Maestria Automação"
+            width={180}
+            height={60}
+            className="h-12 w-auto"
+            priority
+          />
+        </div>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
